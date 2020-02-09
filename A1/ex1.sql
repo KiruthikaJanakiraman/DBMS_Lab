@@ -213,7 +213,7 @@ REM 15)Due to typo error, there may be a possibility of false information. Hence
 
 	SELECT * FROM song;
 	SELECT * FROM sungby;
-
+ 
 REM REMOVAL OF EXISTING RECORD, TO CHECK THE EFFECT OF ON DELETE CASCADE
 	DELETE FROM song WHERE alb_id = 'A01' AND track_num = 1;
 
