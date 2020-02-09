@@ -3,7 +3,7 @@ SQL> REM : Deleting table based on hierarchy
 SQL> 
 SQL> 	     drop table sungby;
 
-Table dropped.
+Table dropped. 
 
 SQL> 
 SQL> 	     drop table artist;
