@@ -1,5 +1,5 @@
 REM : Deleting table based on hierarchy
-
+ 
 	drop table sungby;
 
 	drop table artist;
