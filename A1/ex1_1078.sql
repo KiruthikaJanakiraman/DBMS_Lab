@@ -1,534 +1,753 @@
-SQL> @z:/ex1.sql
-SQL> REM : Deleting table based on hierarchy
+SQL> echo ON
+linesize 150
+@c:/assign1-104.sql
+SQL> set echo on:
+SP2-0158: unknown SET option ":"
 SQL> 
-SQL> 	     drop table sungby; 
-
-Table dropped. 
-
+SQL> prompt DROPPING THE PREVIOUSLY CREATED TABLES
+DROPPING THE PREVIOUSLY CREATED TABLES
 SQL> 
-SQL> 	     drop table artist;
+SQL> DROP TABLE sungby;
+
+Table dropped.
+
+SQL> DROP TABLE song;
+
+Table dropped.
+
+SQL> DROP TABLE artist;
+
+Table dropped.
+
+SQL> DROP TABLE album;
+
+Table dropped.
+
+SQL> DROP TABLE studio;
+
+Table dropped.
+
+SQL> DROP TABLE musician;
 
 Table dropped.
 
 SQL> 
-SQL> 	     drop table song;
-
-Table dropped.
-
+SQL> prompt CREATING THE TABLES
+CREATING THE TABLES
 SQL> 
-SQL> 	     drop table album;
-
-Table dropped.
-
-SQL> 
-SQL> 	     drop table musician;
-
-Table dropped.
-
-SQL> 
-SQL> 	     drop table studio;
-
-Table dropped.
-
-SQL> 
-SQL> REM: a)create musician table
-SQL> 
-SQL> 	     create table musician(m_id varchar2(4),
-  2  	     m_name varchar(20),
-  3  	     birthplace varchar2(20),
-  4  	     CONSTRAINT m_id_pk PRIMARY KEY(m_id));
+SQL> CREATE TABLE musician(
+  2  mid VARCHAR(6) PRIMARY KEY,
+  3  mname VARCHAR(20),
+  4  birthplace VARCHAR(25));
 
 Table created.
 
 SQL> 
-SQL> 	     desc musician;
+SQL> DESC musician;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- M_ID                                                                                NOT NULL VARCHAR2(4)
- M_NAME                                                                                       VARCHAR2(20)
- BIRTHPLACE                                                                                   VARCHAR2(20)
+ MID                                                                                 NOT NULL VARCHAR2(6)
+ MNAME                                                                                        VARCHAR2(20)
+ BIRTHPLACE                                                                                   VARCHAR2(25)
 
 SQL> 
-SQL> REM: Entering values into MUSICIAN
-SQL> 
-SQL> 	     insert into musician values('001','AR Rahman','Chennai');
-
-1 row created.
-
-SQL> 	     insert into musician values('002','Anirudh','Chennai');
-
-1 row created.
-
-SQL> 	     insert into musician values('003','Ilayaraja','Chennai');
-
-1 row created.
-
-SQL> 
-SQL> REM: Displaying MUSICIAN table
-SQL> 
-SQL> 	     select * from musician;
-
-M_ID M_NAME               BIRTHPLACE                                                                                                                  
----- -------------------- --------------------                                                                                                        
-001  AR Rahman            Chennai                                                                                                                     
-002  Anirudh              Chennai                                                                                                                     
-003  Ilayaraja            Chennai                                                                                                                     
-
-SQL> 
-SQL> REM: f)Creating STUDIO table
-SQL> 
-SQL> 	     create table studio(st_name varchar2(20),
-  2  	     address varchar2(20),
-  3  	     phone number(10),
-  4  	     CONSTRAINT st_name_pk primary key(st_name));
+SQL> CREATE TABLE studio(
+  2  stname VARCHAR(20) PRIMARY KEY,
+  3  staddr VARCHAR(25),
+  4  stdphn NUMBER(14));
 
 Table created.
 
 SQL> 
-SQL> 	     desc studio;
+SQL> DESC studio;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- ST_NAME                                                                             NOT NULL VARCHAR2(20)
- ADDRESS                                                                                      VARCHAR2(20)
- PHONE                                                                                        NUMBER(10)
+ STNAME                                                                              NOT NULL VARCHAR2(20)
+ STADDR                                                                                       VARCHAR2(25)
+ STDPHN                                                                                       NUMBER(14)
 
 SQL> 
-SQL> REM: Entering values into STUDIO
-SQL> 
-SQL> 	     insert into studio values('Medley Studio','KK Nagar','1234567897');
-
-1 row created.
-
-SQL> 	     insert into studio values('Lakshman Shruti','Vadapalani','7584948345');
-
-1 row created.
-
-SQL> 	     insert into studio values('Raja Studio','Ashok Nagar','7549368345');
-
-1 row created.
-
-SQL> 
-SQL> REM: Displaying STUDIO table
-SQL> 
-SQL> 	     select * from studio;
-
-ST_NAME              ADDRESS                   PHONE                                                                                                  
--------------------- -------------------- ----------                                                                                                  
-Medley Studio        KK Nagar             1234567897                                                                                                  
-Lakshman Shruti      Vadapalani           7584948345                                                                                                  
-Raja Studio          Ashok Nagar          7549368345                                                                                                  
-
-SQL> 
-SQL> REM: b)Creating ALBUM table
-SQL> 
-SQL> 	     create table album(alb_name varchar2(20),
-  2  	     alb_id varchar2(10),
-  3  	     year number(4),
-  4  	     num_tracks number(2),
-  5  	     st_name varchar2(20),
-  6  	     alb_genre varchar2(20),
-  7  	     m_id varchar2(4),
-  8  	     CONSTRAINT alb_id_pk PRIMARY KEY(alb_id),
-  9  	     CONSTRAINT m_id_fk FOREIGN KEY(m_id) REFERENCES musician(m_id),
- 10  	     CONSTRAINT st_name_fk FOREIGN KEY(st_name) REFERENCES studio(st_name),
- 11  	     CONSTRAINT yr_check check(year>=1945),
- 12  	     CONSTRAINT alb_genre_check check( alb_genre in('CAR', 'DIV', 'MOV', 'POP')));
+SQL> CREATE TABLE album(
+  2  alname VARCHAR(20),
+  3  alid VARCHAR(6) PRIMARY KEY,
+  4  release_yr DATE CHECK(EXTRACT(year from release_yr) >= 1945),
+  5  no_of_tracks NUMBER(3) NOT NULL,
+  6  stname VARCHAR(20) REFERENCES studio(stname),
+  7  genre VARCHAR(4) CHECK(genre IN('CAR', 'DIV', 'MOV', 'POP')),
+  8  mid VARCHAR(6) REFERENCES musician(mid));
 
 Table created.
 
 SQL> 
-SQL> 
-SQL> 	     desc album;
+SQL> DESC album;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- ALB_NAME                                                                                     VARCHAR2(20)
- ALB_ID                                                                              NOT NULL VARCHAR2(10)
- YEAR                                                                                         NUMBER(4)
- NUM_TRACKS                                                                                   NUMBER(2)
- ST_NAME                                                                                      VARCHAR2(20)
- ALB_GENRE                                                                                    VARCHAR2(20)
- M_ID                                                                                         VARCHAR2(4)
+ ALNAME                                                                                       VARCHAR2(20)
+ ALID                                                                                NOT NULL VARCHAR2(6)
+ RELEASE_YR                                                                                   DATE
+ NO_OF_TRACKS                                                                        NOT NULL NUMBER(3)
+ STNAME                                                                                       VARCHAR2(20)
+ GENRE                                                                                        VARCHAR2(4)
+ MID                                                                                          VARCHAR2(6)
 
 SQL> 
-SQL> REM: Entering values into ALBUM
-SQL> 
-SQL> 	     insert into album values('I','A01','2017','6','Medley Studio','MOV','001');
-
-1 row created.
-
-SQL> 	     insert into album values('Raja Rani','A02','2015','7','Raja Studio','MOV','003');
-
-1 row created.
-
-SQL> 	     insert into album values('Super Deluxe','A03','2019','3','Lakshman Shruti','MOV','002');
-
-1 row created.
-
-SQL> 
-SQL> REM: Year check constraint violation
-SQL> 
-SQL> 	     insert into album values('Vaaranam Aayiram','A03','1942','3','Lakshman Shruti','MOV','002');
-  	insert into album values('Vaaranam Aayiram','A03','1942','3','Lakshman Shruti','MOV','002')
-*
-ERROR at line 1:
-ORA-02290: check constraint (1078.YR_CHECK) violated 
-
-
-SQL> 
-SQL> REM: Album genre check constraint viloation
-SQL> 
-SQL> 	     insert into album values('Bigil','A03','1942','3','Lakshman Shruti','HIP','002');
-   	insert into album values('Bigil','A03','1942','3','Lakshman Shruti','HIP','002')
-*
-ERROR at line 1:
-ORA-02290: check constraint (1078.ALB_GENRE_CHECK) violated 
-
-
-SQL> 
-SQL> REM: Displaying ALBUM table
-SQL> 
-SQL> 	     select * from album;
-
-ALB_NAME             ALB_ID           YEAR NUM_TRACKS ST_NAME              ALB_GENRE            M_ID                                                  
--------------------- ---------- ---------- ---------- -------------------- -------------------- ----                                                  
-I                    A01              2017          6 Medley Studio        MOV                  001                                                   
-Raja Rani            A02              2015          7 Raja Studio          MOV                  003                                                   
-Super Deluxe         A03              2019          3 Lakshman Shruti      MOV                  002                                                   
-
-SQL> 
-SQL> REM: c)Creating SONG table
-SQL> 
-SQL> 	     create table song(alb_id varchar2(10),
-  2  	     track_num number(2),
-  3  	     song_name varchar2(20) CONSTRAINT sname_null NOT NULL,
-  4  	     length number(4),
-  5  	     song_genre varchar2(20),
-  6  	     CONSTRAINT song_pk PRIMARY KEY(alb_id,track_num),
-  7  	     CONSTRAINT alb_id_fk FOREIGN KEY(alb_id) REFERENCES album(alb_id),
-  8  	     CONSTRAINT song_genre_check check(song_genre in('PHI', 'REL', 'LOV', 'PAT')),
-  9  	     constraint chk check((length>7 AND song_genre='PAT') OR song_genre<>'PAT'));
+SQL> CREATE TABLE artist(
+  2  arid VARCHAR(6) PRIMARY KEY,
+  3  arname VARCHAR(20),
+  4  CONSTRAINT uniq_aname UNIQUE(arname));
 
 Table created.
 
 SQL> 
-SQL> 	     desc song;
+SQL> DESC artist;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- ALB_ID                                                                              NOT NULL VARCHAR2(10)
- TRACK_NUM                                                                           NOT NULL NUMBER(2)
- SONG_NAME                                                                           NOT NULL VARCHAR2(20)
- LENGTH                                                                                       NUMBER(4)
- SONG_GENRE                                                                                   VARCHAR2(20)
+ ARID                                                                                NOT NULL VARCHAR2(6)
+ ARNAME                                                                                       VARCHAR2(20)
 
 SQL> 
-SQL> REM: Entering values into SONG
-SQL> 
-SQL> 	     insert into song values('A01',1,'Ladio',4,'REL');
-
-1 row created.
-
-SQL> 	     insert into song values('A02',2,'Hey Baby',3,'LOV');
-
-1 row created.
-
-SQL> 	     insert into song values('A03',3,'Oh Shanti',4,'LOV');
-
-1 row created.
-
-SQL> 
-SQL> REM: Genre PAT length check constraint violation
-SQL> 
-SQL> 	     insert into song values('A03',3,'Vandhe Mataram',6,'PAT');
-   	insert into song values('A03',3,'Vandhe Mataram',6,'PAT')
-*
-ERROR at line 1:
-ORA-02290: check constraint (1078.CHK) violated 
-
-
-SQL> 
-SQL> REM: Song genre check constraint violation
-SQL> 
-SQL> 	     insert into song values('A03',3,'Wow',6,'EDM');
-	insert into song values('A03',3,'Wow',6,'EDM')
-*
-ERROR at line 1:
-ORA-02290: check constraint (1078.SONG_GENRE_CHECK) violated 
-
-
-SQL> 
-SQL> REM: Displaying SONG table
-SQL> 
-SQL> 	     select * from song;
-
-ALB_ID      TRACK_NUM SONG_NAME                LENGTH SONG_GENRE                                                                                      
----------- ---------- -------------------- ---------- --------------------                                                                            
-A01                 1 Ladio                         4 REL                                                                                             
-A02                 2 Hey Baby                      3 LOV                                                                                             
-A03                 3 Oh Shanti                     4 LOV                                                                                             
-
-SQL> 
-SQL> REM: d)Creating ARTIST table
-SQL> 
-SQL> 	     create table artist(art_id varchar2(4),
-  2  	     art_name varchar2(20),
-  3  	     CONSTRAINT art_id_pk PRIMARY KEY(art_id),
-  4  	     CONSTRAINT art_name_uniq UNIQUE(art_name));
+SQL> CREATE TABLE song(
+  2  alid VARCHAR(6),
+  3  track_no VARCHAR(6),
+  4  sname VARCHAR(20),
+  5  length NUMBER(3),
+  6  genre VARCHAR(4),
+  7  PRIMARY KEY(alid, track_no),
+  8  CONSTRAINT fk_alid FOREIGN KEY(alid) REFERENCES album(alid),
+  9  CONSTRAINT chk_genre CHECK(genre IN('PHI', 'REL', 'LOV', 'DEV', 'PAT')),
+ 10  CONSTRAINT chk_len CHECK(length>7 OR genre<>'PAT'));
 
 Table created.
 
 SQL> 
-SQL> 	     desc artist;
+SQL> DESC song;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- ART_ID                                                                              NOT NULL VARCHAR2(4)
- ART_NAME                                                                                     VARCHAR2(20)
+ ALID                                                                                NOT NULL VARCHAR2(6)
+ TRACK_NO                                                                            NOT NULL VARCHAR2(6)
+ SNAME                                                                                        VARCHAR2(20)
+ LENGTH                                                                                       NUMBER(3)
+ GENRE                                                                                        VARCHAR2(4)
 
 SQL> 
-SQL> REM: Entering values into ARTIST
-SQL> 
-SQL> 	     insert into artist values('a001','Sid Sriram');
-
-1 row created.
-
-SQL> 	     insert into artist values('a002','Anirudh');
-
-1 row created.
-
-SQL> 	     insert into artist values('a003','Shankar Mahadevan');
-
-1 row created.
-
-SQL> 
-SQL> REM: Unique constraint violation
-SQL> 
-SQL> 	     insert into artist values('a004','Shankar Mahadevan');
-   	insert into artist values('a004','Shankar Mahadevan')
-*
-ERROR at line 1:
-ORA-00001: unique constraint (1078.ART_NAME_UNIQ) violated 
-
-
-SQL> 
-SQL> REM: Displaying ARTIST table
-SQL> 
-SQL> 	     select * from artist;
-
-ART_ ART_NAME                                                                                                                                         
----- --------------------                                                                                                                             
-a001 Sid Sriram                                                                                                                                       
-a002 Anirudh                                                                                                                                          
-a003 Shankar Mahadevan                                                                                                                                
-
-SQL> 
-SQL> REM: e)Creating SUNGBY table
-SQL> 
-SQL> 	     create table sungby(alb_id varchar2(4),
-  2  	     art_id varchar2(4),
-  3  	     track_num number(2),
-  4  	     rec_date date,
-  5  	     CONSTRAINT sungby_pk PRIMARY KEY(alb_id,art_id,track_num),
-  6  	     CONSTRAINT alb_id_track_num_fk FOREIGN KEY(alb_id,track_num) REFERENCES song(alb_id,track_num),
-  7  	     CONSTRAINT art_id_fk FOREIGN KEY(art_id) REFERENCES artist(art_id));
+SQL> CREATE TABLE sungby(
+  2  alid VARCHAR(6),
+  3  track_no VARCHAR(6),
+  4  arid VARCHAR(6) REFERENCES artist(arid),
+  5  recording_date DATE,
+  6  PRIMARY KEY(alid, track_no, arid),
+  7  CONSTRAINT fk_sungby FOREIGN KEY(alid, track_no) REFERENCES song(alid, track_no));
 
 Table created.
 
 SQL> 
-SQL> 	     desc sungby;
+SQL> DESC sungby;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- ALB_ID                                                                              NOT NULL VARCHAR2(4)
- ART_ID                                                                              NOT NULL VARCHAR2(4)
- TRACK_NUM                                                                           NOT NULL NUMBER(2)
- REC_DATE                                                                                     DATE
+ ALID                                                                                NOT NULL VARCHAR2(6)
+ TRACK_NO                                                                            NOT NULL VARCHAR2(6)
+ ARID                                                                                NOT NULL VARCHAR2(6)
+ RECORDING_DATE                                                                               DATE
 
 SQL> 
-SQL> REM: Entering values into SUNGBY
+SQL> prompt DESCRIBING THE TABLES
+DESCRIBING THE TABLES
 SQL> 
-SQL> 	     insert into sungby values('A01','a001',1,'20FEB2016');
-
-1 row created.
-
-SQL> 	     insert into sungby values('A02','a002',2,'25JUN2013');
-
-1 row created.
-
-SQL> 	     insert into sungby values('A03','a003',3,'28MAY2013');
-
-1 row created.
-
-SQL> 
-SQL> REM: Displaying SUNGBY table
-SQL> 
-SQL> 	     select * from sungby;
-
-ALB_ ART_  TRACK_NUM REC_DATE                                                                                                                         
----- ---- ---------- ---------                                                                                                                        
-A01  a001          1 20-FEB-16                                                                                                                        
-A02  a002          2 25-JUN-13                                                                                                                        
-A03  a003          3 28-MAY-13                                                                                                                        
-
-SQL> 
-SQL> REM ********************************************************************
-SQL> REM				     ALTER TABLE QUERIES
-SQL> REM ********************************************************************
-SQL> 
-SQL> REM 10)It is necessary to represent the gender of an artist in the table
-SQL> 
-SQL> 	     ALTER TABLE artist ADD gender CHAR(1);
-
-Table altered.
-
-SQL> 	     desc artist;
+SQL> DESC musician;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- ART_ID                                                                              NOT NULL VARCHAR2(4)
- ART_NAME                                                                                     VARCHAR2(20)
- GENDER                                                                                       CHAR(1)
+ MID                                                                                 NOT NULL VARCHAR2(6)
+ MNAME                                                                                        VARCHAR2(20)
+ BIRTHPLACE                                                                                   VARCHAR2(25)
 
-SQL> 
-SQL> 	     INSERT INTO artist VALUES('a004','Yuvan','M');
-
-1 row created.
-
-SQL> 	     select * from artist;
-
-ART_ ART_NAME             G                                                                                                                           
----- -------------------- -                                                                                                                           
-a001 Sid Sriram                                                                                                                                       
-a002 Anirudh                                                                                                                                          
-a003 Shankar Mahadevan                                                                                                                                
-a004 Yuvan                M                                                                                                                           
-
-SQL> 
-SQL> REM 11)The first few words of the lyrics constitute the song name. The song name do not accommodate some of the words (in lyrics).
-SQL> 
-SQL> 	     ALTER TABLE song MODIFY song_name VARCHAR2(50);
-
-Table altered.
-
-SQL> 	     desc song;
+SQL> DESC studio;
  Name                                                                                Null?    Type
  ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
- ALB_ID                                                                              NOT NULL VARCHAR2(10)
- TRACK_NUM                                                                           NOT NULL NUMBER(2)
- SONG_NAME                                                                           NOT NULL VARCHAR2(50)
- LENGTH                                                                                       NUMBER(4)
- SONG_GENRE                                                                                   VARCHAR2(20)
+ STNAME                                                                              NOT NULL VARCHAR2(20)
+ STADDR                                                                                       VARCHAR2(25)
+ STDPHN                                                                                       NUMBER(14)
+
+SQL> DESC album;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ ALNAME                                                                                       VARCHAR2(20)
+ ALID                                                                                NOT NULL VARCHAR2(6)
+ RELEASE_YR                                                                                   DATE
+ NO_OF_TRACKS                                                                        NOT NULL NUMBER(3)
+ STNAME                                                                                       VARCHAR2(20)
+ GENRE                                                                                        VARCHAR2(4)
+ MID                                                                                          VARCHAR2(6)
+
+SQL> DESC artist;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ ARID                                                                                NOT NULL VARCHAR2(6)
+ ARNAME                                                                                       VARCHAR2(20)
+
+SQL> DESC song;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ ALID                                                                                NOT NULL VARCHAR2(6)
+ TRACK_NO                                                                            NOT NULL VARCHAR2(6)
+ SNAME                                                                                        VARCHAR2(20)
+ LENGTH                                                                                       NUMBER(3)
+ GENRE                                                                                        VARCHAR2(4)
+
+SQL> DESC sungby;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ ALID                                                                                NOT NULL VARCHAR2(6)
+ TRACK_NO                                                                            NOT NULL VARCHAR2(6)
+ ARID                                                                                NOT NULL VARCHAR2(6)
+ RECORDING_DATE                                                                               DATE
 
 SQL> 
-SQL> 	     insert into song values('A03',4,'Nenjukul peithidum maamazhai','20','LOV');
+SQL> prompt INSERTING VALUES INTO THE TABLES
+INSERTING VALUES INTO THE TABLES
+SQL> 
+SQL> INSERT INTO musician VALUES('m03', 'calvin', 'usa');
+
+1 row created.
+
+SQL> INSERT INTO musician VALUES('m01', 'miguel', 'mexico');
+
+1 row created.
+
+SQL> INSERT INTO musician VALUES('m02', 'elaine', 'france');
 
 1 row created.
 
 SQL> 
-SQL> REM 12)The phone number of each studio should be different.
-SQL> 
-SQL> 	     ALTER TABLE studio ADD CONSTRAINT ph_uk UNIQUE(phone);
+SQL> INSERT INTO studio VALUES('big machine', '122 pinwheel road, texas', 7445578787);
 
-Table altered.
+1 row created.
+
+SQL> INSERT INTO studio VALUES('yg', 'seoul circle, s.korea', 4445578787);
+
+1 row created.
+
+SQL> INSERT INTO studio VALUES('sm', 'shibuya, tokyo, japan', 3445578787);
+
+1 row created.
 
 SQL> 
-SQL> 	     REM: Phone unique constraint violation
-SQL> 	     INSERT INTO studio VALUES('6D','Bangalore', 1234567897);
-	INSERT INTO studio VALUES('6D','Bangalore', 1234567897)
+SQL> INSERT INTO album VALUES('square up', 'al01', '27-jun-2019', 4, 'yg', 'POP', 'm03');
+
+1 row created.
+
+SQL> INSERT INTO album VALUES('lionheart', 'al11', '23-may-2017', 10, 'sm', 'POP', 'm02');
+
+1 row created.
+
+SQL> INSERT INTO album VALUES('red', 'al04', '12-nov-2012', 13, 'big machine', 'MOV', 'm03');
+
+1 row created.
+
+SQL> INSERT INTO album VALUES('1989', 'al05', '2-oct-2015', 13, 'big machine', 'POP', 'm01');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO artist VALUES('a01', 'taylor');
+
+1 row created.
+
+SQL> INSERT INTO artist VALUES('a099', 'jennie');
+
+1 row created.
+
+SQL> INSERT INTO artist VALUES('a07', 'yuri');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO song VALUES('al04', 't01', '22', 212, 'PHI');
+
+1 row created.
+
+SQL> INSERT INTO song VALUES('al05', 't01', 'blank space', 221, 'LOV');
+
+1 row created.
+
+SQL> INSERT INTO song VALUES('al04', 't04', 'safe', 271, 'PAT');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO sungby VALUES('al05', 't01', 'a01', '27-sep-2014');
+
+1 row created.
+
+SQL> INSERT INTO sungby VALUES('al04', 't04', 'a01', '23-aug-2013');
+
+1 row created.
+
+SQL> INSERT INTO sungby VALUES('al04', 't01', 'a01', '9-may-2009');
+
+1 row created.
+
+SQL> 
+SQL> prompt DISPLAYING THE TABLE CONTENTS
+DISPLAYING THE TABLE CONTENTS
+SQL> 
+SQL> SELECT * FROM musician;
+
+MID    MNAME                BIRTHPLACE                                                                                                                
+------ -------------------- -------------------------                                                                                                 
+m03    calvin               usa                                                                                                                       
+m01    miguel               mexico                                                                                                                    
+m02    elaine               france                                                                                                                    
+
+SQL> SELECT * FROM studio;
+
+STNAME               STADDR                        STDPHN                                                                                             
+-------------------- ------------------------- ----------                                                                                             
+big machine          122 pinwheel road, texas  7445578787                                                                                             
+yg                   seoul circle, s.korea     4445578787                                                                                             
+sm                   shibuya, tokyo, japan     3445578787                                                                                             
+
+SQL> SELECT * FROM album;
+
+ALNAME               ALID   RELEASE_Y NO_OF_TRACKS STNAME               GENR MID                                                                      
+-------------------- ------ --------- ------------ -------------------- ---- ------                                                                   
+square up            al01   27-JUN-19            4 yg                   POP  m03                                                                      
+lionheart            al11   23-MAY-17           10 sm                   POP  m02                                                                      
+red                  al04   12-NOV-12           13 big machine          MOV  m03                                                                      
+1989                 al05   02-OCT-15           13 big machine          POP  m01                                                                      
+
+SQL> SELECT * FROM artist;
+
+ARID   ARNAME                                                                                                                                         
+------ --------------------                                                                                                                           
+a01    taylor                                                                                                                                         
+a099   jennie                                                                                                                                         
+a07    yuri                                                                                                                                           
+
+SQL> SELECT * FROM song;
+
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al04   t04    safe                        271 PAT                                                                                                     
+
+SQL> SELECT * FROM sungby;
+
+ALID   TRACK_ ARID   RECORDING                                                                                                                        
+------ ------ ------ ---------                                                                                                                        
+al05   t01    a01    27-SEP-14                                                                                                                        
+al04   t04    a01    23-AUG-13                                                                                                                        
+al04   t01    a01    09-MAY-09                                                                                                                        
+
+SQL> 
+SQL> prompt 1)The genre for Album can be generally categorized as CAR for Carnatic, DIV for Divine, MOV for Movies, POP for Pop songs.
+1)The genre for Album can be generally categorized as CAR for Carnatic, DIV for Divine, MOV for Movies, POP for Pop songs.
+SQL> 
+SQL> SELECT * FROM album;
+
+ALNAME               ALID   RELEASE_Y NO_OF_TRACKS STNAME               GENR MID                                                                      
+-------------------- ------ --------- ------------ -------------------- ---- ------                                                                   
+square up            al01   27-JUN-19            4 yg                   POP  m03                                                                      
+lionheart            al11   23-MAY-17           10 sm                   POP  m02                                                                      
+red                  al04   12-NOV-12           13 big machine          MOV  m03                                                                      
+1989                 al05   02-OCT-15           13 big machine          POP  m01                                                                      
+
+SQL> INSERT INTO album VALUES('square up', 'al01', '01-dec-2019', 4, 'yg', 'RAP', 'm03');
+INSERT INTO album VALUES('square up', 'al01', '01-dec-2019', 4, 'yg', 'RAP', 'm03')
 *
 ERROR at line 1:
-ORA-00001: unique constraint (1078.PH_UK) violated 
+ORA-02290: check constraint (SYSTEM.SYS_C005677) violated 
 
 
 SQL> 
-SQL> REM 13)An artist who sings a song for a particular track of an album can not be recorded without the record_date.
+SQL> prompt 2)The genre for Song can be PHI for philosophical, REL for relationship, LOV for duet, DEV for devotional, PAT for patriotic type of songs.
+2)The genre for Song can be PHI for philosophical, REL for relationship, LOV for duet, DEV for devotional, PAT for patriotic type of songs.
 SQL> 
-SQL> 	     ALTER TABLE sungby MODIFY (rec_date NOT NULL);
+SQL> SELECT * FROM song;
 
-Table altered.
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al04   t04    safe                        271 PAT                                                                                                     
 
-SQL> 	     INSERT INTO sungby(track_num,alb_id,art_id) VALUES(1,'A01','a002');
-	INSERT INTO sungby(track_num,alb_id,art_id) VALUES(1,'A01','a002')
+SQL> INSERT INTO song VALUES('al01', 't04', 'solo', 233, 'JAZZ');
+INSERT INTO song VALUES('al01', 't04', 'solo', 233, 'JAZZ')
 *
 ERROR at line 1:
-ORA-01400: cannot insert NULL into ("1078"."SUNGBY"."REC_DATE") 
+ORA-02290: check constraint (SYSTEM.CHK_GENRE) violated 
 
 
 SQL> 
-SQL> REM 14)It was decided to include the genre NAT for nature songs.
+SQL> prompt 3)The artist ID, album ID, musician ID, and track number, studio name are used toretrieve tuple(s) individually from respective relations.
+3)The artist ID, album ID, musician ID, and track number, studio name are used toretrieve tuple(s) individually from respective relations.
 SQL> 
-SQL> 	     ALTER TABLE song DROP CONSTRAINT song_genre_check;
+SQL> SELECT * FROM artist;
+
+ARID   ARNAME                                                                                                                                         
+------ --------------------                                                                                                                           
+a01    taylor                                                                                                                                         
+a099   jennie                                                                                                                                         
+a07    yuri                                                                                                                                           
+
+SQL> INSERT INTO artist VALUES('a01', 'mark');
+INSERT INTO artist VALUES('a01', 'mark')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C005681) violated 
+
+
+SQL> SELECT * FROM album;
+
+ALNAME               ALID   RELEASE_Y NO_OF_TRACKS STNAME               GENR MID                                                                      
+-------------------- ------ --------- ------------ -------------------- ---- ------                                                                   
+square up            al01   27-JUN-19            4 yg                   POP  m03                                                                      
+lionheart            al11   23-MAY-17           10 sm                   POP  m02                                                                      
+red                  al04   12-NOV-12           13 big machine          MOV  m03                                                                      
+1989                 al05   02-OCT-15           13 big machine          POP  m01                                                                      
+
+SQL> INSERT INTO album VALUES('bigbang', 'al01', 2019, 4, 'yg', 'POP', 'm03');
+INSERT INTO album VALUES('bigbang', 'al01', 2019, 4, 'yg', 'POP', 'm03')
+                                            *
+ERROR at line 1:
+ORA-00932: inconsistent datatypes: expected DATE got NUMBER 
+
+
+SQL> SELECT * FROM musician;
+
+MID    MNAME                BIRTHPLACE                                                                                                                
+------ -------------------- -------------------------                                                                                                 
+m03    calvin               usa                                                                                                                       
+m01    miguel               mexico                                                                                                                    
+m02    elaine               france                                                                                                                    
+
+SQL> INSERT INTO musician VALUES('m03', 'canary', 'usa');
+INSERT INTO musician VALUES('m03', 'canary', 'usa')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C005673) violated 
+
+
+SQL> SELECT * FROM sungby;
+
+ALID   TRACK_ ARID   RECORDING                                                                                                                        
+------ ------ ------ ---------                                                                                                                        
+al05   t01    a01    27-SEP-14                                                                                                                        
+al04   t04    a01    23-AUG-13                                                                                                                        
+al04   t01    a01    09-MAY-09                                                                                                                        
+
+SQL> INSERT INTO sungby VALUES('al04', 't04', 'a01', '2-dec-2018');
+INSERT INTO sungby VALUES('al04', 't04', 'a01', '2-dec-2018')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C005687) violated 
+
+
+SQL> SELECT * FROM studio;
+
+STNAME               STADDR                        STDPHN                                                                                             
+-------------------- ------------------------- ----------                                                                                             
+big machine          122 pinwheel road, texas  7445578787                                                                                             
+yg                   seoul circle, s.korea     4445578787                                                                                             
+sm                   shibuya, tokyo, japan     3445578787                                                                                             
+
+SQL> INSERT INTO studio VALUES('sm', 'big ben, london, uk', 3445578787);
+INSERT INTO studio VALUES('sm', 'big ben, london, uk', 3445578787)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C005674) violated 
+
+
+SQL> 
+SQL> prompt 6)It was learnt that the artists do not have the same name.
+6)It was learnt that the artists do not have the same name.
+SQL> 
+SQL> SELECT * FROM artist;
+
+ARID   ARNAME                                                                                                                                         
+------ --------------------                                                                                                                           
+a01    taylor                                                                                                                                         
+a099   jennie                                                                                                                                         
+a07    yuri                                                                                                                                           
+
+SQL> INSERT INTO artist VALUES('a23', 'taylor');
+INSERT INTO artist VALUES('a23', 'taylor')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.UNIQ_ANAME) violated 
+
+
+SQL> 
+SQL> prompt 7)The number of tracks in an album must always be recorded.
+7)The number of tracks in an album must always be recorded.
+SQL> 
+SQL> SELECT * FROM album;
+
+ALNAME               ALID   RELEASE_Y NO_OF_TRACKS STNAME               GENR MID                                                                      
+-------------------- ------ --------- ------------ -------------------- ---- ------                                                                   
+square up            al01   27-JUN-19            4 yg                   POP  m03                                                                      
+lionheart            al11   23-MAY-17           10 sm                   POP  m02                                                                      
+red                  al04   12-NOV-12           13 big machine          MOV  m03                                                                      
+1989                 al05   02-OCT-15           13 big machine          POP  m01                                                                      
+
+SQL> INSERT INTO album VALUES('square up', 'al01', '01-dec-2019', NULL, 'yg', 'POP', 'm03');
+INSERT INTO album VALUES('square up', 'al01', '01-dec-2019', NULL, 'yg', 'POP', 'm03')
+                                                             *
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("SYSTEM"."ALBUM"."NO_OF_TRACKS") 
+
+
+SQL> 
+SQL> prompt 8)The length of each song must be greater than 7 for PAT songs.
+8)The length of each song must be greater than 7 for PAT songs.
+SQL> 
+SQL> SELECT * FROM song;
+
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al04   t04    safe                        271 PAT                                                                                                     
+
+SQL> INSERT INTO song VALUES('al04', 't04', 'safe', 5, 'PAT');
+INSERT INTO song VALUES('al04', 't04', 'safe', 5, 'PAT')
+*
+ERROR at line 1:
+ORA-02290: check constraint (SYSTEM.CHK_LEN) violated 
+
+
+SQL> 
+SQL> prompt 9)The year of release of an album can not be earlier than 1945.
+9)The year of release of an album can not be earlier than 1945.
+SQL> 
+SQL> SELECT * FROM album;
+
+ALNAME               ALID   RELEASE_Y NO_OF_TRACKS STNAME               GENR MID                                                                      
+-------------------- ------ --------- ------------ -------------------- ---- ------                                                                   
+square up            al01   27-JUN-19            4 yg                   POP  m03                                                                      
+lionheart            al11   23-MAY-17           10 sm                   POP  m02                                                                      
+red                  al04   12-NOV-12           13 big machine          MOV  m03                                                                      
+1989                 al05   02-OCT-15           13 big machine          POP  m01                                                                      
+
+SQL> INSERT INTO album VALUES('green', 'al05', '8-feb-1922', 13, 'big machine', 'POP', 'm01');
+INSERT INTO album VALUES('green', 'al05', '8-feb-1922', 13, 'big machine', 'POP', 'm01')
+*
+ERROR at line 1:
+ORA-02290: check constraint (SYSTEM.SYS_C005676) violated 
+
+
+SQL> 
+SQL> prompt 10)It is necessary to represent the gender of an artist in the table.
+10)It is necessary to represent the gender of an artist in the table.
+SQL> 
+SQL> DESC artist;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ ARID                                                                                NOT NULL VARCHAR2(6)
+ ARNAME                                                                                       VARCHAR2(20)
+
+SQL> ALTER TABLE artist ADD gender VARCHAR(20);
 
 Table altered.
 
+SQL> DESC artist;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ ARID                                                                                NOT NULL VARCHAR2(6)
+ ARNAME                                                                                       VARCHAR2(20)
+ GENDER                                                                                       VARCHAR2(20)
+
 SQL> 
-SQL> 	     ALTER TABLE song ADD CONSTRAINT song_genre_check CHECK(song_genre IN ('PHI','REL','LOV','DEV','PAT','NAT'));
+SQL> prompt 12)The phone number of each studio should be different.
+12)The phone number of each studio should be different.
+SQL> 
+SQL> ALTER TABLE studio ADD CONSTRAINT uniq_phn UNIQUE(stdphn);
 
 Table altered.
 
+SQL> DESC studio;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ STNAME                                                                              NOT NULL VARCHAR2(20)
+ STADDR                                                                                       VARCHAR2(25)
+ STDPHN                                                                                       NUMBER(14)
+
+SQL> SELECT * FROM studio;
+
+STNAME               STADDR                        STDPHN                                                                                             
+-------------------- ------------------------- ----------                                                                                             
+big machine          122 pinwheel road, texas  7445578787                                                                                             
+yg                   seoul circle, s.korea     4445578787                                                                                             
+sm                   shibuya, tokyo, japan     3445578787                                                                                             
+
+SQL> INSERT INTO studio VALUES('sm', 'shibuya, tokyo, japan', 4445578787);
+INSERT INTO studio VALUES('sm', 'shibuya, tokyo, japan', 4445578787)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C005674) violated 
+
+
 SQL> 
-SQL> 	     INSERT INTO song VALUES('A03',5,'Breeze',4.00, 'NAT');
+SQL> prompt 13)An artist who sings a song for a particular track of an album can not be recorded without the record_date.
+13)An artist who sings a song for a particular track of an album can not be recorded without the record_date.
+SQL> 
+SQL> ALTER TABLE sungby MODIFY recording_date DATE NOT NULL;
+
+Table altered.
+
+SQL> DESC sungby;
+ Name                                                                                Null?    Type
+ ----------------------------------------------------------------------------------- -------- --------------------------------------------------------
+ ALID                                                                                NOT NULL VARCHAR2(6)
+ TRACK_NO                                                                            NOT NULL VARCHAR2(6)
+ ARID                                                                                NOT NULL VARCHAR2(6)
+ RECORDING_DATE                                                                      NOT NULL DATE
+
+SQL> SELECT * FROM sungby;
+
+ALID   TRACK_ ARID   RECORDING                                                                                                                        
+------ ------ ------ ---------                                                                                                                        
+al05   t01    a01    27-SEP-14                                                                                                                        
+al04   t04    a01    23-AUG-13                                                                                                                        
+al04   t01    a01    09-MAY-09                                                                                                                        
+
+SQL> INSERT INTO sungby VALUES('al04', 't01', 'a01', NULL);
+INSERT INTO sungby VALUES('al04', 't01', 'a01', NULL)
+                                                *
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("SYSTEM"."SUNGBY"."RECORDING_DATE") 
+
+
+SQL> 
+SQL> prompt 14)It was decided to include the genre NAT for nature songs.
+14)It was decided to include the genre NAT for nature songs.
+SQL> 
+SQL> SELECT * FROM song;
+
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al04   t04    safe                        271 PAT                                                                                                     
+
+SQL> ALTER TABLE song DROP CONSTRAINT chk_genre;
+
+Table altered.
+
+SQL> ALTER TABLE song ADD CONSTRAINT chk_genre CHECK(genre IN('PHI', 'REL', 'LOV', 'DEV', 'PAT', 'NAT'));
+
+Table altered.
+
+SQL> INSERT INTO song VALUES('al01', 't04', 'solo', 233, 'NAT');
 
 1 row created.
 
+SQL> SELECT * FROM song;
+
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al04   t04    safe                        271 PAT                                                                                                     
+al01   t04    solo                        233 NAT                                                                                                     
+
 SQL> 
-SQL> REM 15)Due to typo error, there may be a possibility of false information. Hence while deleting the song information, make sure that all the corresponding information are also deleted.
+SQL> prompt 15)Due to typo­error, there may be a possibility of false information.
+15)Due to typo­error, there may be a possibility of false information.
+SQL> REM:Hence while deleting the song information, make sure that all the corresponding information are also deleted.
 SQL> 
-SQL> 	     ALTER TABLE sungby DROP CONSTRAINT alb_id_track_num_fk;
+SQL> ALTER TABLE sungby DROP CONSTRAINT fk_sungby;
+
+Table altered.
+
+SQL> ALTER TABLE sungby ADD CONSTRAINT fk_sungby FOREIGN KEY(alid, track_no) REFERENCES song(alid, track_no) ON DELETE CASCADE;
 
 Table altered.
 
 SQL> 
-SQL> 	     ALTER TABLE sungby ADD  CONSTRAINT alb_id_track_num_fk
-  2  						     FOREIGN KEY(alb_id, track_num)
-  3  						     REFERENCES song(alb_id, track_num) ON DELETE CASCADE;
+SQL> SELECT * FROM song;
 
-Table altered.
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al04   t04    safe                        271 PAT                                                                                                     
+al01   t04    solo                        233 NAT                                                                                                     
 
-SQL> 
-SQL> 
-SQL> 	     SELECT * FROM song;
+SQL> SELECT * FROM sungby;
 
-ALB_ID      TRACK_NUM SONG_NAME                                              LENGTH SONG_GENRE                                                        
----------- ---------- -------------------------------------------------- ---------- --------------------                                              
-A01                 1 Ladio                                                       4 REL                                                               
-A02                 2 Hey Baby                                                    3 LOV                                                               
-A03                 3 Oh Shanti                                                   4 LOV                                                               
-A03                 4 Nenjukul peithidum maamazhai                               20 LOV                                                               
-A03                 5 Breeze                                                      4 NAT                                                               
+ALID   TRACK_ ARID   RECORDING                                                                                                                        
+------ ------ ------ ---------                                                                                                                        
+al05   t01    a01    27-SEP-14                                                                                                                        
+al04   t04    a01    23-AUG-13                                                                                                                        
+al04   t01    a01    09-MAY-09                                                                                                                        
 
-SQL> 	     SELECT * FROM sungby;
-
-ALB_ ART_  TRACK_NUM REC_DATE                                                                                                                         
----- ---- ---------- ---------                                                                                                                        
-A01  a001          1 20-FEB-16                                                                                                                        
-A02  a002          2 25-JUN-13                                                                                                                        
-A03  a003          3 28-MAY-13                                                                                                                        
-
-SQL> 
-SQL> REM REMOVAL OF EXISTING RECORD, TO CHECK THE EFFECT OF ON DELETE CASCADE
-SQL> 	     DELETE FROM song WHERE alb_id = 'A01' AND track_num = 1;
+SQL> DELETE FROM song WHERE sname='safe';
 
 1 row deleted.
 
-SQL> 
-SQL> 	     SELECT * FROM song;
+SQL> SELECT * FROM song;
 
-ALB_ID      TRACK_NUM SONG_NAME                                              LENGTH SONG_GENRE                                                        
----------- ---------- -------------------------------------------------- ---------- --------------------                                              
-A02                 2 Hey Baby                                                    3 LOV                                                               
-A03                 3 Oh Shanti                                                   4 LOV                                                               
-A03                 4 Nenjukul peithidum maamazhai                               20 LOV                                                               
-A03                 5 Breeze                                                      4 NAT                                                               
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al01   t04    solo                        233 NAT                                                                                                     
 
-SQL> 	     SELECT * FROM sungby;
+SQL> SELECT * FROM sungby;
 
-ALB_ ART_  TRACK_NUM REC_DATE                                                                                                                         
----- ---- ---------- ---------                                                                                                                        
-A02  a002          2 25-JUN-13                                                                                                                        
-A03  a003          3 28-MAY-13                                                                                                                        
+ALID   TRACK_ ARID   RECORDING                                                                                                                        
+------ ------ ------ ---------                                                                                                                        
+al05   t01    a01    27-SEP-14                                                                                                                        
+al04   t01    a01    09-MAY-09                                                                                                                        
 
 SQL> 
-SQL> 
-SQL> REM ********************************************************************
-SQL> REM				     END OF SCRIPT FILE
-SQL> REM ********************************************************************
-SQL> 
-SQL> 
+SQL> SELECT * FROM musician;
+
+MID    MNAME                BIRTHPLACE                                                                                                                
+------ -------------------- -------------------------                                                                                                 
+m03    calvin               usa                                                                                                                       
+m01    miguel               mexico                                                                                                                    
+m02    elaine               france                                                                                                                    
+
+SQL> SELECT * FROM studio;
+
+STNAME               STADDR                        STDPHN                                                                                             
+-------------------- ------------------------- ----------                                                                                             
+big machine          122 pinwheel road, texas  7445578787                                                                                             
+yg                   seoul circle, s.korea     4445578787                                                                                             
+sm                   shibuya, tokyo, japan     3445578787                                                                                             
+
+SQL> SELECT * FROM album;
+
+ALNAME               ALID   RELEASE_Y NO_OF_TRACKS STNAME               GENR MID                                                                      
+-------------------- ------ --------- ------------ -------------------- ---- ------                                                                   
+square up            al01   27-JUN-19            4 yg                   POP  m03                                                                      
+lionheart            al11   23-MAY-17           10 sm                   POP  m02                                                                      
+red                  al04   12-NOV-12           13 big machine          MOV  m03                                                                      
+1989                 al05   02-OCT-15           13 big machine          POP  m01                                                                      
+
+SQL> SELECT * FROM artist;
+
+ARID   ARNAME               GENDER                                                                                                                    
+------ -------------------- --------------------                                                                                                      
+a01    taylor                                                                                                                                         
+a099   jennie                                                                                                                                         
+a07    yuri                                                                                                                                           
+
+SQL> SELECT * FROM song;
+
+ALID   TRACK_ SNAME                    LENGTH GENR                                                                                                    
+------ ------ -------------------- ---------- ----                                                                                                    
+al04   t01    22                          212 PHI                                                                                                     
+al05   t01    blank space                 221 LOV                                                                                                     
+al01   t04    solo                        233 NAT                                                                                                     
+
+SQL> SELECT * FROM sungby;
+
+ALID   TRACK_ ARID   RECORDING                                                                                                                        
+------ ------ ------ ---------                                                                                                                        
+al05   t01    a01    27-SEP-14                                                                                                                        
+al04   t01    a01    09-MAY-09                                                                                                                        
+
 SQL> spool off
